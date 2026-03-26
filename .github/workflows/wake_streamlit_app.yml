@@ -1,0 +1,41 @@
+name: Keep Streamlit App Awake
+
+on:
+  schedule:
+    - cron: '0 */8 * * *'
+  workflow_dispatch:  
+
+jobs:
+  wake:
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-chromium-${{ runner.os }}
+
+      - name: Install Playwright
+        run: |
+          pip install playwright
+          playwright install chromium --with-deps
+
+      - name: Wake up Streamlit app
+        run: python wake.py
+
+      - name: Upload screenshots for diagnosis
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wake-screenshots
+          path: screenshots/
+          retention-days: 2
