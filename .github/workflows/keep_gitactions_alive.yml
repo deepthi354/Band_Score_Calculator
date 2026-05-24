@@ -1,0 +1,19 @@
+name: Keep Actions Alive
+
+on:
+  schedule:
+    - cron: '0 0 1 * *'  # 1st of every month
+  workflow_dispatch:       # Manual trigger anytime
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Make an empty commit to register repo activity
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git commit --allow-empty -m "chore: keep workflows alive [$(date -u '+%Y-%m-%d')]"
+          git push
