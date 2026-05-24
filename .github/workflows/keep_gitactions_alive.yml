@@ -12,11 +12,12 @@ jobs:
   keepalive:
     runs-on: ubuntu-latest
     env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true  # fixes Node.js warning
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0        # fetches full history, ensures pull has latest state
 
       - name: Make an empty commit to register repo activity
         run: |
